@@ -46,7 +46,7 @@ class Dataset(object):
     def load_annotations(self, dataset_type):
         with open(self.annot_path, 'r') as f:
             txt = f.readlines()
-            annotations = [line.strip() for line in txt if len(line.strip().split()[1:]) != 0]
+            annotations = [line.strip() for line in txt if len(line.strip().split()[2:]) != 0]
         np.random.shuffle(annotations)
         return annotations
 
@@ -157,11 +157,11 @@ class Dataset(object):
     def parse_annotation(self, annotation):
 
         line = annotation.split()
-        image_path = line[0]
+        image_path = line[0]+' '+line[1]
         if not os.path.exists(image_path):
             raise KeyError("%s does not exist ... " %image_path)
         image = cv2.imread(image_path)
-        bboxes = np.array([list(map(int, box.split(','))) for box in line[1:]])
+        bboxes = np.array([list(map(int, box.split(','))) for box in line[2:]])
 
         if self.data_aug:
             image, bboxes = self.random_horizontal_flip(np.copy(image), np.copy(bboxes))
